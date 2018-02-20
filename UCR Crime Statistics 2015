@@ -1,0 +1,231 @@
+---
+title: "Assingment#2"
+author: "Jay"
+date: "February 12, 2018"
+output:
+  html_document:
+    df_print: default
+    theme: journal
+  pdf_document: default
+---
+
+#A Glimplse Of Violent Crimes in the United States 
+
+In this Assignment, I have used FBI crime data for the year 2014 (Courtesy of Social Explorer), to analyze the patterns of four types of major crime in the US mainly: Murder, Rape, Robbery, and Aggravated Assault. This data is yearly published by FBI, under the Uniform Crime Reporting (UCR) Program, and has been the starting place for law enforcement executives, students of criminal justice, researchers, members of the media, and the public at large seeking information on crime in the nation. 
+
+The program was conceived in 1929 by the International Association of Chiefs of Police to meet the need for reliable uniform crime statistics for the nation. In 1930, the FBI was tasked with collecting, publishing, and archiving those statistics The data presented in Crime in the United States reflect the Hierarchy Rule, which requires that only the most serious offense in a multiple-offense criminal incident be counted, that is why we have four serious offences included in our data set.
+
+#SOURCE: (https://ucr.fbi.gov/crime-in-the-u.s/2014/crime-in-the-u.s.-2014/offenses-known-to-law-enforcement/violent-crime)
+
+
+```{r echo=FALSE}
+setwd("D:/R")
+```
+
+# Libraries used in this Assingment:-
+```{r recho=FALSE}
+library(haven)
+library(dplyr)
+library(tibble)
+library(mosaic)
+```
+
+
+```{r echo=FALSE}
+CrimeData <- read.csv("CrimeData.csv", head = TRUE)
+```
+
+
+```{r echo=FALSE}
+str(CrimeData)
+```
+
+
+```{r echo=FALSE}
+names(CrimeData)
+```
+
+
+```{r echo=FALSE}
+summary (CrimeData)
+```
+
+```{r}
+glimpse(CrimeData)
+```
+
+```{r}
+CrimeData %>%
+  select(Name.of.Area, Murders, Rapes, Robberies, Aggravated.Assaults)%>%
+  arrange(Name.of.Area)%>%
+  head(CrimeData, n=51L)
+```
+
+
+```{r}
+lowmurder_states <-filter(CrimeData, Murders < 100)
+highmurder_states <- filter(CrimeData, Murders >= 100)
+```
+
+# VIOLENT CRIME INCIDENTS FOR FOUR SPECIFIC STATES.  
+```{r}
+specific_states <- filter(CrimeData, Name.of.Area == "New York" | Name.of.Area == "Florida" | Name.of.Area == "California" | Name.of.Area == "Texas" )
+specific_states %>%
+    select(Name.of.Area, Total.Violent.Crimes)%>%
+    arrange(desc(Total.Violent.Crimes))%>%
+    head(specific_states, n=5)
+```
+
+# STATES WITH LOWEST VIOLENT CRIME INCIDENTS.
+```{r}
+CrimeData %>%
+    select(Name.of.Area, Murders, Rapes, Robberies, Aggravated.Assaults)%>%
+    arrange(desc(Murders))%>%
+    filter(Murders <20 | Rapes <50 | Robberies <100 | Aggravated.Assaults <200)%>%
+    head(specific_states, n=5)
+```
+
+```{r}
+specific_variables <- select(CrimeData, Name.of.Area, Total.Violent.Crimes  )
+```
+
+#CREATING A NEW VARIBLE
+Using the the UCR's Total violent crime data, we will create a varible for crime rate. The crime rate variable basically gives us a number  of crime(s) occured per 100,000 population. THis is simply done by: Dividing Total Number of Crimes by the total of Population of the US and Multiplying with 100,000. This will help us to take a look at STATES with higer crime rates.
+
+# We also created 4 additional variable to calcualte each percentage of each type of crime in the particular state.
+
+```{r}
+Regional_Data<- mutate(CrimeData, Crime.Rate = Total.Violent.Crimes/325467306 * 100000, Murder_Percent = Murders/Total.Violent.Crimes * 100, Rapes_Percent = Rapes/Total.Violent.Crimes *100, Robberies_Percent= Robberies/Total.Violent.Crimes *100, AA_Percent= Aggravated.Assaults/Total.Violent.Crimes *100 )
+Regional_Data <- arrange(Regional_Data, desc(Murder_Percent))
+```
+
+# CRIME RATES OF DIFFERENT STATES (Descending Order)
+According to the data: California has been the state with higest crime rate. In California, 46.5 crimes have been reported per 100,000 population, as compare to Texas which has 33.6 crime rate per 100,000 population followed by Florida with a 27.97 rate per 100,000 and New York with 23.30 per 100,000 of population. 
+
+On the otherhand, or on the lowest end, Vermont is the state with extremely low crime rate of 0.019 per 100,000 of population, followed by Wyoming with 0.339 per 100,000, Maine with 0.49, and North Dakota with 0.61 with per 100,000 of population.
+
+```{r}
+Regional_Data %>%
+  select(Name.of.Area, Crime.Rate, Murder_Percent, Rapes_Percent, Robberies_Percent, AA_Percent)%>%
+  arrange(desc(Crime.Rate))
+```
+
+# CREATING VARIABLE Region USING "mutate"
+```{r}
+Regional_Data <- mutate(Regional_Data, Crime.Rate = Crime.Rate, Region = FIPS)
+```
+
+# USING "recode"TO CREATE REGIONS BASED ON STATES.
+# This recode will help to use to use Region as a categorical variable to identify multiple cases of crime in specific regions in the US.
+
+```{r}
+Regional_Data$Region <- recode (Regional_Data$Region, 
+                               
+'09' = "North East", '23' = "North East", '25' = "North East", '33' = "North East", 
+'44' = "North East", '50' = "North East",'34' = "North East", '36' = "North East", '42' = "North East",
+
+'17' = "Midwest", '18'= "Midwest",'26'= "Midwest",'39'= "Midwest",'55'= "Midwest", '19' = "Midwest", 
+'20' = "Midwest", '27' =  "Midwest",'29'= "Midwest", '31' = "Midwest", '38' = "Midwest", '46' = "Midwest",
+
+'10' = "South", '12'= "South",'13'= "South",'24'= "South",'37'= "South", '45' = "South", '51' = "South",
+'54' = "South",'01'= "South",'21' = "South",'28' = "South",'47' = "South",'05' = "South", '22' = "South",
+'40' = "South", '48' = "South", '11' = "South",
+
+'04' = "West", '08'= "West",'16'= "West",'30'= "West", '32'= "West", '35' = "West", '49' = "West",'56' = "West",
+'02'= "West", '06' = "West", '15' = "West", '41' = "West", '53' = "West")
+
+```
+
+```{r}
+str(Regional_Data)
+```
+
+# RECOMMENDED METHODS FOR PIPE FUNCTION : SIMPLING USING MULTIPLE OPERATIONS TOGATHER.
+From using the operation above, we have regional based statistics in averages of eact region in the US of reported crimes in 2014. From the table we can see that the average murders in South region is the highest, and lowest in the North East Region. 
+```{r}
+Regional_Data %>%
+  group_by(Region) %>%
+  select(Murders, Rapes, Robberies, Aggravated.Assaults) %>%
+  summarise(
+    avg_murders = mean(Murders, na.rm = TRUE),
+    avg_rapes = mean(Rapes, na.rm = TRUE),
+    avg_robberies = mean(Robberies, na.rm = TRUE),
+    avg_aggravated.assaults = mean(Aggravated.Assaults, na.rm = TRUE))%>%
+  arrange(avg_murders)%>%
+  filter(avg_murders <= 500)
+```
+
+
+# ALTERNATIVE METHOD WITHOUT USING PIPE FUCTION.
+```{r}
+Regionalgrp_Data <- group_by(Regional_Data, Region)
+summary_data <- summarise(Regionalgrp_Data,
+                          avg_murders = mean(Murders, na.rm = TRUE),
+                          avg_robberies = mean(Robberies, na.rm = TRUE),
+                          avg_rapes = mean(Rapes, na.rm = TRUE),
+                          avg_totalvcrime = mean(Total.Violent.Crimes, na.rm = TRUE))
+```
+
+# DESCRIPTIVE STATISTICS FOR OUR ANALYSIS
+The table below shows statistics for our data. 
+```{r}
+favstats (Murders ~ Region, data = Regionalgrp_Data, na.rm = TRUE)
+favstats (Rapes ~ Region, data = Regionalgrp_Data, na.rm = TRUE)
+favstats (Robberies ~ Region, data = Regionalgrp_Data, na.rm = TRUE)
+favstats (Aggravated.Assaults ~ Region, data = Regionalgrp_Data, na.rm = TRUE)
+```
+
+# AVERAGE MUDERDERS IN THE US. BY REGION
+# According to the Data the average muders in South region of the US is around 371. 
+```{r}
+ggplot(Regional_Data, aes(x= Region, y=Murders ))+theme_bw() +geom_bar(stat= "summary", fun.y = "mean", fill="blue")
+```
+
+# AVERAGE Rapes IN THE US. BY REGION
+# According to the Data the average rapes in South region of the US is around 2400. However, it is important to mention that Midwest is also among the states with high number of rapes with average rapes around 2200. 
+```{r}
+ggplot(Regional_Data, aes(x= Region, y=Rapes)) + theme_bw() +geom_bar(stat= "summary", fun.y = "mean", fill="blue")
+```
+
+# AVERAGE Robberies IN THE US. BY REGION
+# According to the Data the average Aggravated Assaults in South region of the US is around 7500. However, it is important to mention that North East is also among the states with high number of Robberies with average Robberies 6200. 
+
+```{r}
+ggplot(Regional_Data, aes(x= Region, y=Robberies, fill=Murder_Percent )) + theme_bw() +geom_bar(stat= "summary", fun.y = "mean",fill="blue")
+```
+
+# AVERAGE Aggravated Assaults IN THE US. BY REGION
+# According to the Data the average Aggravated Assaults in South region of the US is around 18275.
+```{r}
+ggplot(Regional_Data, aes(x= Region, y=Aggravated.Assaults )) + theme_bw() +geom_bar(stat= "summary", fun.y = "mean",fill="blue")
+```
+
+# A LINE GRAPH TO SHOW A LINEAR RELATIONSHIP BETWEEN MUDERS & ROBBERIES IN THE US.
+From the Graph below it can be seen that the Muders in West region has been consistently increasing with robberies
+which is dangerous trend. A similar relation can be seen in South. However, for other regions such as North East the trend is decresing for murders. But for mid west the trend is still growing.
+
+```{r echo=FALSE}
+ggplot(Regional_Data) + aes(x= Murders, y=Robberies, colour = Region)  +geom_line ()
+```
+
+# A Linear View of Rapes over Aggravated Assaults in the US.
+In this graph, we can see the trean in Rapes and Aggravated assualts in the US. The Southern States of the US are having sharp incline towards rapes and murders. Where, the trend is West region is more towards aggravated assaults. The North East is also among the region with increased rapes and aggravated assaults trend. Only Midwest region is low on aggravated assaults and may have lower rapes cases in future as well. 
+```{r}
+qplot(Rapes, Aggravated.Assaults, data=Regional_Data, colour= Region, geom=c("point", "smooth"), method= "lm") + theme_bw()
+```
+
+# A Linear  of "Murders" over "Robberies" in the US.
+This graph show the trend of robberies and murders in different regions. The West region can be been seen to have very steady and inclined trend with high robberies with high murders. However, the trend of robberies for murder is almost on a rise in every other region. 
+```{r}
+qplot(Robberies, Murders, data=Regional_Data, colour= Region, geom=c("point", "smooth"), method="lm") + theme_bw()
+```
+
+# AN OVERVIEW OF "CRIME RATE" IN THE US BY REGION(s)
+```{r}
+ggplot(Regional_Data, aes(x= Region, y = Crime.Rate))+ theme_bw() + geom_col() 
+```
+
+# A TREND IN DIFFERENT STATES REGARDING "RAPES" AND "AGGRAVATED ASSAULTS"
+```{r}
+ggplot(Regional_Data) + aes(x= Rapes, y=Aggravated.Assaults) + theme_bw() + geom_line () + facet_grid(~ Region)  
+```
