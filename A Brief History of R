@@ -1,0 +1,17 @@
+---
+title: "A Brief History of R"
+author: "J. Adil"
+date: "February 3, 2018"
+output: html_document
+
+In the late 19 century, Alexander Graham Bell laid the foundations Volta Laboratory and Bureau, which was also the part of AT&T Corporation, half owned by its Western Electric manufacturing subsidiary. Later, Volta Laboratory and Bureau was renamed as Bell Labs, which is also known as the birthplace of many technological ideas, and also the workplace for eight Nobel Prize winners. This brief history of Bell Labs was important to mention because "S" language which is the theme of this essay, was also developed by John Chambers, Rick Becker, and Allan Walks at Bell Laboratories. Initially, in those days statistical computing relied on languages such as FORTRAN subroutines. Later on, S language was introduced to as an alternative for the more interactive approach. In 1976, the first version of S was built and operated on General Comprehensive Operating System aka GCOS. 
+
+It was 1980, the first version of S came out and distributed independently. By 1988, S language was largely changed in terms of syntax. Many new S language had many more features, however, users reported the new S language to be more difficult. There was soon a need for transition to more user-friendly dialect, and this where R comes in.In 1993, Ross Ihaka and Robert Gentlemen at the University of Auckland, New Zealand developed 'R'. R which was used to be called "An Introduction to the S Language" is a dialect of the S language, and has come to be by far the dominant dialect. This means R is built on the same basis as S language, both execute the same functions. It is important to understand that R, is unlike other programming languages because it is a FOSS (Free and open source software). Actually, FOSS is just an umbrella term for any software which is free and its source code has been made available with a license. However, FOSS did not become a buzz word in computer programming recently, it has a history to it. The FOSS movement was started in 1983 by Richard Stallman at Massachusetts Institute of Technology. The aim of FOSS movement is to give users freedom and control in their use of their computers and computing devices by collaboratively developing and providing software that is based on the following freedom rights: users are free to run the software, share it (copy, distribute), study it and modify it. GNU software guarantees these freedom-rights legally (via its license), and is therefore free software; the use of the word "free" always being taken to refer to freedom (Source GNU.org).
+
+
+This epitome of R and S language with reference to FOSS movement was just to briefly explore the history, relationship, development of R and S language. Also, it was worth describing the approach towards free and open source software usage. In the end, I would like mention that being a beginner or advanced programmers, we might understand the differences between package and language. A package allows you to do some set of task. Where, a language allows you to specify the performance of the new task, and this what R is all about. A language which both powerful and flexible.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
